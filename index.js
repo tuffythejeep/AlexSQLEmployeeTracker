@@ -9,7 +9,7 @@ async function viewAllDepartments() {
     const table = new ConsoleTable({
       columns: ["ID", "Name"],
     });
-    departments.forEach((department) => {
+    departments.rows.forEach((department) => {
       table.addRow({
         ID: department.id,
         Name: department.name,
@@ -27,7 +27,7 @@ async function viewAllRoles() {
     const table = new ConsoleTable({
       columns: ["ID", "Title", "Department", "Salary"],
     });
-    roles.forEach((role) => {
+    roles.rows.forEach((role) => {
       table.addRow({
         ID: role.id,
         Title: role.title,
@@ -55,7 +55,7 @@ async function viewAllEmployees() {
         "Manager",
       ],
     });
-    employees.forEach((employee) => {
+    employees.rows.forEach((employee) => {
       table.addRow({
         ID: employee.id,
         "First Name": employee.first_name,
@@ -93,7 +93,7 @@ async function addDepartment() {
 async function addRole() {
   try {
     const departments = await db.query(queries.getAllDepartments);
-    const departmentChoices = departments.map((department) => ({
+    const departmentChoices = departments.rows.map((department) => ({
       name: department.name,
       value: department.id,
     }));
@@ -131,13 +131,13 @@ async function addRole() {
 async function addEmployee() {
   try {
     const roles = await db.query(queries.getAllRoles);
-    const roleChoices = roles.map((role) => ({
+    const roleChoices = roles.rows.map((role) => ({
       name: role.title,
       value: role.id,
     }));
 
     const managers = await db.query(queries.getAllEmployees);
-    const managerChoices = managers.map((manager) => ({
+    const managerChoices = managers.rows.map((manager) => ({
       name: `${manager.first_name} ${manager.last_name}`,
       value: manager.id,
     }));
@@ -186,13 +186,13 @@ async function addEmployee() {
 async function updateEmployeeRole() {
   try {
     const employees = await db.query(queries.getAllEmployees);
-    const employeeChoices = employees.map((employee) => ({
+    const employeeChoices = employees.rows.map((employee) => ({
       name: `${employee.first_name} ${employee.last_name}`,
       value: employee.id,
     }));
 
     const roles = await db.query(queries.getAllRoles);
-    const roleChoices = roles.map((role) => ({
+    const roleChoices = roles.rows.map((role) => ({
       name: role.title,
       value: role.id,
     }));
@@ -222,7 +222,7 @@ async function updateEmployeeRole() {
 async function updateEmployeeManager() {
   try {
     const employees = await db.query(queries.getAllEmployees);
-    const employeeChoices = employees.map((employee) => ({
+    const employeeChoices = employees.rows.map((employee) => ({
       name: `${employee.first_name} ${employee.last_name}`,
       value: employee.id,
     }));
@@ -252,7 +252,7 @@ async function updateEmployeeManager() {
 async function viewEmployeesByManager() {
   try {
     const managers = await db.query(queries.getAllManagers);
-    const managerChoices = managers.map((manager) => ({
+    const managerChoices = managers.rows.map((manager) => ({
       name: `${manager.first_name} ${manager.last_name}`,
       value: manager.id,
     }));
@@ -281,7 +281,7 @@ async function viewEmployeesByManager() {
       ],
     });
 
-    employees.forEach((employee) => {
+    employees.rows.forEach((employee) => {
       table.addRow({
         ID: employee.id,
         "First Name": employee.first_name,
@@ -301,7 +301,7 @@ async function viewEmployeesByManager() {
 async function viewEmployeesByDepartment() {
   try {
     const departments = await db.query(queries.getAllDepartments);
-    const departmentChoices = departments.map((department) => ({
+    const departmentChoices = departments.rows.map((department) => ({
       name: department.name,
       value: department.id,
     }));
@@ -330,7 +330,7 @@ async function viewEmployeesByDepartment() {
       ],
     });
 
-    employees.forEach((employee) => {
+    employees.rows.forEach((employee) => {
       table.addRow({
         ID: employee.id,
         "First Name": employee.first_name,
@@ -350,7 +350,7 @@ async function viewEmployeesByDepartment() {
 async function deleteDepartment() {
   try {
     const departments = await db.query(queries.getAllDepartments);
-    const departmentChoices = departments.map((department) => ({
+    const departmentChoices = departments.rows.map((department) => ({
       name: department.name,
       value: department.id,
     }));
@@ -374,7 +374,7 @@ async function deleteDepartment() {
 async function deleteRole() {
   try {
     const roles = await db.query(queries.getAllRoles);
-    const roleChoices = roles.map((role) => ({
+    const roleChoices = roles.rows.map((role) => ({
       name: role.title,
       value: role.id,
     }));
@@ -398,7 +398,7 @@ async function deleteRole() {
 async function deleteEmployee() {
   try {
     const employees = await db.query(queries.getAllEmployees);
-    const employeeChoices = employees.map((employee) => ({
+    const employeeChoices = employees.rows.map((employee) => ({
       name: `${employee.first_name} ${employee.last_name}`,
       value: employee.id,
     }));
@@ -422,7 +422,7 @@ async function deleteEmployee() {
 async function viewDepartmentBudget() {
   try {
     const departments = await db.query(queries.getAllDepartments);
-    const departmentChoices = departments.map((department) => ({
+    const departmentChoices = departments.rows.map((department) => ({
       name: department.name,
       value: department.id,
     }));
@@ -436,9 +436,9 @@ async function viewDepartmentBudget() {
       },
     ]);
 
-    const [budget] = await db.query(queries.viewDepartmentBudget, [
-      departmentId,
-    ]);
+    const [budget] = (
+      await db.query(queries.viewDepartmentBudget, [departmentId])
+    ).rows;
     console.log(
       `The total budget for the selected department is: $${budget.total_budget}`
     );
@@ -449,7 +449,9 @@ async function viewDepartmentBudget() {
 
 async function start() {
   try {
+    console.log("Connecting to the database...");
     await db.connect();
+    console.log("Connected to the database.");
 
     const choices = [
       "View all departments",
@@ -524,41 +526,11 @@ async function start() {
           console.log("Exiting application...");
           await db.end();
           process.exit(0);
+          break;
       }
     }
   } catch (error) {
-    console.error("An error occurred:", error);
-    await db.end();
-    process.exit(1);
-  }
-}
-
-async function start() {
-  try {
-    await db.connect();
-
-    const choices = [
-      // ... your choices ...
-    ];
-
-    while (true) {
-      const { choice } = await inquirer.prompt({
-        type: "list",
-        name: "choice",
-        message: "What would you like to do?",
-        choices,
-      });
-
-      switch (choice) {
-        // ... your switch cases ...
-        case "Exit":
-          console.log("Exiting application...");
-          await db.end();
-          process.exit(0);
-      }
-    }
-  } catch (error) {
-    console.error("An error occurred:", error);
+    console.error("An error occurred:", error.message || error);
     await db.end();
     process.exit(1);
   }

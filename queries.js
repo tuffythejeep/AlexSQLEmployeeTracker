@@ -22,20 +22,30 @@ module.exports = {
   `,
 
   addDepartment: `
-    INSERT INTO department (name) VALUES (?)
+    INSERT INTO department (name) VALUES ($1)
   `,
 
   addRole: `
-    INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)
+    INSERT INTO role (title, salary, department_id) VALUES ($1, $2, $3)
   `,
 
   addEmployee: `
-    INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)
+    INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ($1, $2, $3, $4)
   `,
 
   updateEmployeeRole: `
-    UPDATE employee SET role_id = ? WHERE id = ?
+    UPDATE employee SET role_id = $1 WHERE id = $2
   `,
 
-  // Add more queries as needed...
+  getAllDepartments: `
+    SELECT id, name FROM department
+  `,
+
+  getAllRoles: `
+    SELECT id, title FROM role
+  `,
+
+  getAllEmployees: `
+    SELECT id, first_name, last_name FROM employee
+  `,
 };
