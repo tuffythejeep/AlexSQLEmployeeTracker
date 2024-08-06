@@ -1,20 +1,32 @@
-const { Client } = require("pg");
+// db.js
+const { Pool } = require("pg");
 
-class Database {
-  constructor() {
-    this.client = new Client({
-    });
-  }
+const pool = new Pool({
+  user: "postgres",
+  host: "localhost",
+  database: "employee_tracker",
+  password: "password123",
+  port: 5432, // default PostgreSQL port
+});
 
-  async connect() {
-    await this.client.connect();
-  }
-
-  async query(text, params) {
-    const res = await this.client.query(text, params);
-    return res.rows;
-  }
-
-}
-
-module.exports = Database;
+module.exports = {
+  query: (text, params) => pool.query(text, params),
+  connect: async () => {
+    try {
+      await pool.connect();
+      console.log("Database connected successfully");
+    } catch (error) {
+      console.error("Error connecting to the database:", error);
+      throw error;
+    }
+  },
+  end: async () => {
+    try {
+      await pool.end();
+      console.log("Database connection closed");
+    } catch (error) {
+      console.error("Error closing database connection:", error);
+      throw error;
+    }
+  },
+};
