@@ -161,8 +161,7 @@ async function addRole() {
       {
         type: 'input',
         name: 'salary',
-        message: 'Enter   
- the role salary:',
+        message: 'Enter the role salary:',
       },
       {
         type: 'list',
@@ -179,5 +178,143 @@ async function addRole() {
     console.error(error);
   }
 }
+
+async function addEmployee() {
+  try {
+    await db.connect();
+
+    const roles = await db.query(queries.getAllRoles);
+    const roleChoices = roles.map(role => ({
+      name: role.title,
+      value: role.id
+    }));
+
+    const managers = await db.query(queries.getAllEmployees);
+    const managerChoices = managers.map(manager => ({
+      name: `${manager.first_name} ${manager.last_name}`,
+      value: manager.id
+    }));
+    managerChoices.unshift({ name: 'None', value: null });
+
+    const   
+ { firstName, lastName, roleId, managerId } = await inquirer.prompt([
+      {
+        type: 'input',
+        name: 'firstName',
+        message: 'Enter the employee\'s first name:',
+      },
+      {
+        type: 'input',
+        name: 'lastName',
+        message:   
+ 'Enter the employee\'s last name:',
+      },
+      {
+        type: 'list',
+        name: 'roleId',
+        message: 'Select the employee\'s role:',
+        choices: roleChoices,
+      },
+      {
+        type: 'list',
+        name: 'managerId',
+        message: 'Select the employee\'s manager:',
+        choices: managerChoices,
+      },
+    ]);
+
+    await db.query(queries.addEmployee,   
+ [firstName, lastName, roleId, managerId]);
+    console.log('Employee added successfully!');
+  } catch (error) {
+    console.error(error);   
+
+  }
+}
+
+async function updateEmployeeRole() {
+  try {
+    await db.connect();
+
+    const employees = await db.query(queries.getAllEmployees);
+    const employeeChoices = employees.map(employee => ({
+      name: `${employee.first_name} ${employee.last_name}`,
+      value: employee.id   
+
+    }));
+
+    const roles = await db.query(queries.getAllRoles);   
+
+    const roleChoices = roles.map(role => ({
+      name: role.title,
+      value: role.id
+    }));
+
+    const { employeeId, roleId } = await inquirer.prompt([
+      {
+        type: 'list',
+        name: 'employeeId',
+        message: 'Select the employee to update:',
+        choices: employeeChoices,
+      },
+      {
+        type: 'list',
+        name: 'roleId',
+        message: 'Select the employee\'s new role:',
+        choices: roleChoices,
+      },
+    ]);
+
+    await db.query(queries.updateEmployeeRole,   
+ [roleId, employeeId]);
+    console.log('Employee role updated successfully!');
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function viewEmployeesByManager() {
+  try {
+    await db.connect();
+
+    const managers = await db.query(queries.getAllManagers);
+    const managerChoices = managers.map(manager => ({
+      name: `${manager.first_name} ${manager.last_name}`,
+      value: manager.id
+    }));
+    managerChoices.unshift({ name: 'None', value: null });
+
+    const { managerId } = await inquirer.prompt([
+      {
+        type: 'list',
+        name: 'managerId',
+        message: 'Select a manager:',
+        choices: managerChoices,
+      },
+    ]);
+
+    const employees = await db.query(queries.viewEmployeesByManager, [managerId]);
+
+    const table = new ConsoleTable({
+      columns: ['ID', 'First Name', 'Last Name', 'Job Title', 'Department', 'Salary'],
+    });
+
+    employees.forEach(employee => {
+      table.addRow({
+        ID: employee.id,
+        'First Name': employee.first_name,
+        'Last Name': employee.last_name,
+        'Job Title': employee.title,
+        Department: employee.department_name,
+        Salary: employee.salary,
+      });
+    });
+
+    console.log(table.toString());
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 
 start();

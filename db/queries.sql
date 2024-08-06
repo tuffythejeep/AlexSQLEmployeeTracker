@@ -18,3 +18,9 @@ LEFT JOIN employee m ON e.manager_id = m.id;
 
 -- Add a department
 INSERT INTO department (name) VALUES ($1);
+
+-- Add a role to a department
+INSERT INTO role (title, salary, department_id) VALUES ($1, $2, $3);
+
+-- Add an employee to a role
+UPDATE employee SET role_id = $1 WHERE id = $2;
