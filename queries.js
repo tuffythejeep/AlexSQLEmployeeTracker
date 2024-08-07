@@ -1,5 +1,5 @@
 module.exports = {
-  viewAllDepartments: "SELECT * FROM department",
+  viewAllDepartments: "SELECT * FROM department;",
 
   viewAllRoles: `
     SELECT role.id, role.title, department.name AS department_name, role.salary
@@ -14,7 +14,7 @@ module.exports = {
     FROM employee
     JOIN role ON employee.role_id = role.id
     JOIN department ON role.department_id = department.id
-    LEFT JOIN employee manager ON employee.manager_id = manager.id
+    LEFT JOIN employee manager ON employee.manager_id = manager.id;
   `,
 
   addDepartment: "INSERT INTO department (name) VALUES ($1)",
