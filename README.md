@@ -36,7 +36,9 @@ You can find my repository page here:
 
 Here is the link to my recording:
 
-- <(https://drive.google.com/file/d/1RnShV-_fCQVCX7rtVWmhJHWIJLL163y-/view)>
+- <https://drive.google.com/file/d/1RnShV-_fCQVCX7rtVWmhJHWIJLL163y-/view>
+OR THIS ONE:
+- <https://drive.google.com/file/d/1RnShV-_fCQVCX7rtVWmhJHWIJLL163y-/view?usp=sharing>
 
 
 Here are some pictures of my application on my VSCode:
