@@ -3,7 +3,8 @@ VALUES
   ('Sales'),
   ('Engineering'),
   ('Finance'),
-  ('Human Resources')
+  ('Human Resources'),
+  ('Accounting')
 ON CONFLICT (name) DO NOTHING;
 
 INSERT INTO role (title, salary, department_id)
