@@ -1,51 +1,68 @@
-// queries.js
-
 module.exports = {
-  viewAllDepartments: `
-    SELECT id, name 
-    FROM department
-  `,
+  viewAllDepartments: "SELECT * FROM department",
 
   viewAllRoles: `
-    SELECT r.id, r.title, d.name AS department_name, r.salary
-    FROM role r
-    JOIN department d ON r.department_id = d.id
+    SELECT role.id, role.title, department.name AS department_name, role.salary
+    FROM role
+    JOIN department ON role.department_id = department.id;
   `,
 
   viewAllEmployees: `
-    SELECT e.id, e.first_name, e.last_name, r.title, d.name AS department_name, r.salary, 
-           CONCAT(m.first_name, ' ', m.last_name) AS manager_name
-    FROM employee e
-    LEFT JOIN role r ON e.role_id = r.id
-    LEFT JOIN department d ON r.department_id = d.id
-    LEFT JOIN employee m ON e.manager_id = m.id
+    SELECT employee.id, employee.first_name, employee.last_name, role.title, 
+           department.name AS department_name, role.salary, 
+           CONCAT(manager.first_name, ' ', manager.last_name) AS manager_name
+    FROM employee
+    JOIN role ON employee.role_id = role.id
+    JOIN department ON role.department_id = department.id
+    LEFT JOIN employee manager ON employee.manager_id = manager.id
   `,
 
-  addDepartment: `
-    INSERT INTO department (name) VALUES ($1)
+  addDepartment: "INSERT INTO department (name) VALUES ($1)",
+
+  addRole:
+    "INSERT INTO role (title, salary, department_id) VALUES ($1, $2, $3)",
+
+  addEmployee:
+    "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ($1, $2, $3, $4)",
+
+  updateEmployeeRole: "UPDATE employee SET role_id = $1 WHERE id = $2",
+
+  updateEmployeeManager: "UPDATE employee SET manager_id = $1 WHERE id = $2",
+
+  viewEmployeesByManager: `
+    SELECT employee.id, employee.first_name, employee.last_name, role.title, 
+           department.name AS department_name, role.salary
+    FROM employee
+    JOIN role ON employee.role_id = role.id
+    JOIN department ON role.department_id = department.id
+    WHERE employee.manager_id = $1
   `,
 
-  addRole: `
-    INSERT INTO role (title, salary, department_id) VALUES ($1, $2, $3)
+  viewEmployeesByDepartment: `
+    SELECT employee.id, employee.first_name, employee.last_name, role.title, role.salary, 
+           CONCAT(manager.first_name, ' ', manager.last_name) AS manager_name
+    FROM employee
+    JOIN role ON employee.role_id = role.id
+    JOIN department ON role.department_id = department.id
+    LEFT JOIN employee manager ON employee.manager_id = manager.id
+    WHERE department.id = $1
   `,
 
-  addEmployee: `
-    INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ($1, $2, $3, $4)
+  deleteDepartment: "DELETE FROM department WHERE id = $1",
+
+  deleteRole: "DELETE FROM role WHERE id = $1",
+
+  deleteEmployee: "DELETE FROM employee WHERE id = $1",
+
+  viewDepartmentBudget: `
+    SELECT department.id, department.name, SUM(role.salary) AS total_budget
+    FROM employee
+    JOIN role ON employee.role_id = role.id
+    JOIN department ON role.department_id = department.id
+    WHERE department.id = $1
+    GROUP BY department.id, department.name
   `,
 
-  updateEmployeeRole: `
-    UPDATE employee SET role_id = $1 WHERE id = $2
-  `,
-
-  getAllDepartments: `
-    SELECT id, name FROM department
-  `,
-
-  getAllRoles: `
-    SELECT id, title FROM role
-  `,
-
-  getAllEmployees: `
-    SELECT id, first_name, last_name FROM employee
-  `,
+  getAllRoles: "SELECT * FROM role",
+  getAllEmployees: "SELECT * FROM employee",
 };
