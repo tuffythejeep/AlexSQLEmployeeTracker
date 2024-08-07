@@ -36,7 +36,7 @@ You can find my repository page here:
 
 Here is the link to my recording:
 
-- <[https://github.com/tuffythejeep/AlexSQLEmployeeTracker](https://drive.google.com/file/d/1RnShV-_fCQVCX7rtVWmhJHWIJLL163y-/view)>
+- <(https://drive.google.com/file/d/1RnShV-_fCQVCX7rtVWmhJHWIJLL163y-/view)>
 
 
 Here are some pictures of my application on my VSCode:
