@@ -41,6 +41,8 @@ Here is the link to my recording:
 
 Here are some pictures of my application on my VSCode:
 
+![image](https://github.com/user-attachments/assets/dc519e68-9a17-40e2-ba3b-83232c3bf7ce)
+
 
 ## Installation
 
